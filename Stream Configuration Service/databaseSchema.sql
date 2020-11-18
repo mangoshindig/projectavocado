@@ -18,6 +18,26 @@ USE `workflowconfig`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `account`
+--
+
+DROP TABLE IF EXISTS `account`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `account` (
+  `AccountID` int NOT NULL AUTO_INCREMENT,
+  `Code` varchar(45) DEFAULT NULL,
+  `Name` varchar(255) DEFAULT NULL,
+  `IsActive` tinyint DEFAULT NULL,
+  `CreatedBy` varchar(255) DEFAULT NULL,
+  `CreatedDate` datetime DEFAULT NULL,
+  `LastModifiedBy` varchar(255) DEFAULT NULL,
+  `LastModifiedDate` datetime DEFAULT NULL,
+  PRIMARY KEY (`AccountID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `action`
 --
 
@@ -26,12 +46,15 @@ DROP TABLE IF EXISTS `action`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `action` (
   `ActionID` int NOT NULL AUTO_INCREMENT,
+  `AccountID` int DEFAULT NULL,
   `Name` varchar(255) DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,
   `CreatedDate` datetime DEFAULT NULL,
   `LastModifiedBy` varchar(255) DEFAULT NULL,
   `LastModifiedDate` datetime DEFAULT NULL,
-  PRIMARY KEY (`ActionID`)
+  PRIMARY KEY (`ActionID`),
+  KEY `FK_Action_AccountID_idx` (`AccountID`),
+  CONSTRAINT `FK_Action_AccountID` FOREIGN KEY (`AccountID`) REFERENCES `account` (`AccountID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -59,6 +82,7 @@ DROP TABLE IF EXISTS `field`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `field` (
   `FieldID` int NOT NULL AUTO_INCREMENT,
+  `AccountID` int DEFAULT NULL,
   `Name` varchar(255) DEFAULT NULL,
   `Reference` varchar(255) DEFAULT NULL,
   `FieldTypeID` int DEFAULT NULL,
@@ -68,6 +92,8 @@ CREATE TABLE `field` (
   `LastModifiedDate` datetime DEFAULT NULL,
   PRIMARY KEY (`FieldID`),
   KEY `FK_Field_FieldTypeID_idx` (`FieldTypeID`),
+  KEY `FK_Field_AccountID_idx` (`AccountID`),
+  CONSTRAINT `FK_Field_AccountID` FOREIGN KEY (`AccountID`) REFERENCES `account` (`AccountID`),
   CONSTRAINT `FK_Field_FieldTypeID` FOREIGN KEY (`FieldTypeID`) REFERENCES `fieldtype` (`FieldTypeID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -102,13 +128,16 @@ DROP TABLE IF EXISTS `project`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `project` (
   `ProjectID` int NOT NULL AUTO_INCREMENT,
+  `AccountID` int DEFAULT NULL,
   `Name` varchar(255) DEFAULT NULL,
   `Code` varchar(45) DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,
   `CreatedDate` datetime DEFAULT NULL,
   `LastModifiedBy` varchar(255) DEFAULT NULL,
   `LastModifiedDate` datetime DEFAULT NULL,
-  PRIMARY KEY (`ProjectID`)
+  PRIMARY KEY (`ProjectID`),
+  KEY `FK_Project_AccountID_idx` (`AccountID`),
+  CONSTRAINT `FK_Project_AccountID` FOREIGN KEY (`AccountID`) REFERENCES `account` (`AccountID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -123,6 +152,7 @@ CREATE TABLE `projectfield` (
   `ProjectFieldID` int NOT NULL AUTO_INCREMENT,
   `ProjectID` int DEFAULT NULL,
   `FieldID` int DEFAULT NULL,
+  `AccountID` int DEFAULT NULL,
   `IsActive` tinyint DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,
   `CreatedDate` datetime DEFAULT NULL,
@@ -131,6 +161,8 @@ CREATE TABLE `projectfield` (
   PRIMARY KEY (`ProjectFieldID`),
   KEY `FK_ProjectField_FieldID_idx` (`FieldID`),
   KEY `FK_ProjectField_ProjectID_idx` (`ProjectID`),
+  KEY `FK_ProjectField_AccountID_idx` (`AccountID`),
+  CONSTRAINT `FK_ProjectField_AccountID` FOREIGN KEY (`AccountID`) REFERENCES `account` (`AccountID`),
   CONSTRAINT `FK_ProjectField_FieldID` FOREIGN KEY (`FieldID`) REFERENCES `field` (`FieldID`),
   CONSTRAINT `FK_ProjectField_ProjectID` FOREIGN KEY (`ProjectID`) REFERENCES `project` (`ProjectID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -145,13 +177,16 @@ DROP TABLE IF EXISTS `status`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `status` (
   `StatusID` int NOT NULL AUTO_INCREMENT,
+  `AccountID` int DEFAULT NULL,
   `Name` varchar(255) DEFAULT NULL,
   `IsActive` tinyint DEFAULT NULL,
   `CreatedBy` varchar(255) DEFAULT NULL,
   `CreatedDate` datetime DEFAULT NULL,
   `LastModifiedBy` varchar(255) DEFAULT NULL,
   `LastModifiedDate` datetime DEFAULT NULL,
-  PRIMARY KEY (`StatusID`)
+  PRIMARY KEY (`StatusID`),
+  KEY `FK_Status_AccountID_idx` (`AccountID`),
+  CONSTRAINT `FK_Status_AccountID` FOREIGN KEY (`AccountID`) REFERENCES `account` (`AccountID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -166,6 +201,7 @@ CREATE TABLE `transition` (
   `TransitionID` int NOT NULL AUTO_INCREMENT,
   `Name` varchar(255) DEFAULT NULL,
   `ProjectID` int DEFAULT NULL,
+  `AccountID` int DEFAULT NULL,
   `InboundStatusID` int DEFAULT NULL,
   `OutboundStatusID` int DEFAULT NULL,
   `IsActive` tinyint DEFAULT NULL,
@@ -178,6 +214,8 @@ CREATE TABLE `transition` (
   KEY `FK_Transition_InboundStatusID_idx` (`InboundStatusID`),
   KEY `FK_Transition_OutboundStatusID_idx` (`OutboundStatusID`),
   KEY `FK_Transition_ProjectID_idx` (`ProjectID`),
+  KEY `FK_Transition_AccountID_idx` (`AccountID`),
+  CONSTRAINT `FK_Transition_AccountID` FOREIGN KEY (`AccountID`) REFERENCES `account` (`AccountID`),
   CONSTRAINT `FK_Transition_InboundStatusID` FOREIGN KEY (`InboundStatusID`) REFERENCES `status` (`StatusID`),
   CONSTRAINT `FK_Transition_OutboundStatusID` FOREIGN KEY (`OutboundStatusID`) REFERENCES `status` (`StatusID`),
   CONSTRAINT `FK_Transition_ProjectID` FOREIGN KEY (`ProjectID`) REFERENCES `project` (`ProjectID`)
@@ -361,12 +399,16 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `getprojects`(projectcode_IN varchar(255))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `getprojects`(projectcode_IN varchar(255), accountid_IN int)
 BEGIN
 
+SET SESSION group_concat_max_len = 1000000;
 
 /*HANDLE NULLS / BLANK DATA!!*/
-SELECT DISTINCT JSON_MERGE(JSON_OBJECT('name',p.`Name`),
+SELECT JSON_OBJECT('projects', CAST(
+CONCAT('[',GROUP_CONCAT(jsonString),']') AS json) ) AS projectJson
+FROM (
+SELECT DISTINCT p.ProjectID, JSON_MERGE_PRESERVE(JSON_OBJECT('name',p.`Name`),
 	JSON_OBJECT('code',p.`Code`) ,
     getDateWrappedJson(1, p.`CreatedBy`,p.`CreatedDate`),
     getDateWrappedJson(0, p.`LastModifiedBy`,p.`LastModifiedDate`),
@@ -403,9 +445,64 @@ FROM project p
 		LEFT JOIN fieldtype ftt ON ftt.FieldTypeID = fit.FieldTypeID
 		GROUP BY t.TransitionID ) AS td ON td.TransitionID = t.TransitionID
 WHERE p.Code = projectcode_IN OR IFNULL(projectcode_IN, '') = '' 
-GROUP BY p.ProjectID, t.TransitionID;
+	AND p.AccountID = accountid_IN
+GROUP BY p.ProjectID, t.TransitionID) a;
 
 
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `gettransitions` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_0900_ai_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `gettransitions`(projectcode_IN varchar(255), transitionuuid_IN varchar(255), accountid_IN int)
+BEGIN
+SET SESSION group_concat_max_len = 1000000;
+
+SELECT JSON_OBJECT('transitions', CAST(
+CONCAT('[',GROUP_CONCAT(jsonString),']') AS json) ) AS transitionJson
+FROM (
+SELECT  DISTINCT CAST(
+CONCAT('[',
+		GROUP_CONCAT(DISTINCT getTransitionWrappedJson(t.`name`,s_in.`name`,s_out.`name`,t.orderId, 
+        td.TransitionActions,
+        td.TransitionFields,
+        t.createdBy,
+        t.createdDate, t.lastModifiedBy, t.lastModifiedDate))
+        ,']')
+       AS JSON) 
+     AS jsonString
+FROM transition t
+    LEFT JOIN `status` s_in ON s_in.StatusID = t.InboundStatusID
+    LEFT JOIN `status` s_out ON s_out.StatusID = t.OutboundStatusID
+    LEFT JOIN (
+		SELECT t.TransitionID, JSON_OBJECT('actions',CAST(CONCAT('[',GROUP_CONCAT(DISTINCT getActionWrappedJson(a.`name`)),']') AS JSON)) AS TransitionActions,
+	JSON_OBJECT('fields',CAST(CONCAT('[',GROUP_CONCAT(DISTINCT getFieldWrappedJson(fit.`name`, fit.`reference`, 
+			ftt.`Name`, fit.createdBy, 
+			fit.createdDate, fit.lastModifiedBy, fit.lastModifiedDate,null)),']') AS JSON)) AS TransitionFields
+	FROM transition t 
+		LEFT JOIN transitionaction ta ON ta.TransitionID = t.TransitionID
+		LEFT JOIN transitionfield tf ON tf.TransitionID = t.TransitionID
+		LEFT JOIN `action` a ON a.ActionID = ta.ActionID
+		LEFT JOIN field fit ON fit.FieldID = tf.FieldID
+		LEFT JOIN fieldtype ftt ON ftt.FieldTypeID = fit.FieldTypeID
+		GROUP BY t.TransitionID ) AS td ON td.TransitionID = t.TransitionID
+	LEFT JOIN project p ON p.ProjectID = t.ProjectID
+	WHERE (p.Code = projectcode_IN OR IFNULL(projectcode_IN, '') = '') 
+		##AND (t.UUID = transitionuuid_IN OR IFNULL(transitionuuid_IN, '') = '') blocked by AVO-21
+        AND p.AccountID = accountid_IN
+	GROUP BY t.TransitionID ) a;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -422,4 +519,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-11-18 14:26:14
+-- Dump completed on 2020-11-18 17:44:06
